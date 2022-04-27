@@ -42,6 +42,7 @@ def do_action(action):
         World.try_move(1, 0)
     else:
         return
+    World.render_q(Q)
     s2 = World.player_M
     r += World.score
     return s, action, r, s2
@@ -59,6 +60,7 @@ def do_action_F(action):
         World.try_move_F(1, 0)
     else:
         return
+    World.render_q(Q)
     s2 = World.player_F
     r += World.score
     return s, action, r, s2
@@ -1011,7 +1013,7 @@ def run():
     steps = 0
     while True:
 
-        #Experiment 1
+        #Experiment 1.a
         if steps < 500:
             if change == False:
                 s = World.player_M
@@ -1021,7 +1023,7 @@ def run():
                 (s, a, r, s2) = do_action(max_act)
 
                 # Update Q
-                max_act, max_val = max_Q_valid(s2)
+                max_act, max_val = max_Q(s2)
                 inc_Q(s, a, alpha, r + discount * max_val)
             else:
                 s = World.player_F
@@ -1032,10 +1034,33 @@ def run():
                 (s, a, r, s2) = do_action_F(max_act)
 
                 # Update Q
-                max_act, max_val = max_Q_valid(s2)
+                max_act, max_val = max_Q(s2)
                 inc_Q(s, a, alpha, r + discount * max_val)
         elif steps >= 500 and steps < 8000:
             if change == False:
+                s = World.player_M
+                #max_act, max_val = max_Q(s)
+                max_act, max_val = P_exploit_M(s)
+                #print(max_act, max_val)
+                (s, a, r, s2) = do_action(max_act)
+
+                # Update Q
+                max_act, max_val = max_Q(s2)
+                inc_Q(s, a, alpha, r + discount * max_val)
+            else:
+                s = World.player_F
+                #max_act, max_val = max_Q(s)
+                max_act, max_val = P_exploit_F(s)
+                #print(Q[s])
+                #print(max_act, max_val)
+                (s, a, r, s2) = do_action_F(max_act)
+
+                # Update Q
+                max_act, max_val = max_Q(s2)
+                inc_Q(s, a, alpha, r + discount * max_val)
+
+            #for 1a
+            """ if change == False:
                 s = World.player_M
                 #max_act, max_val = max_Q(s)
                 max_act, max_val = P_random_M(s)
@@ -1055,7 +1080,7 @@ def run():
 
                 # Update Q
                 max_act, max_val = max_Q(s2)
-                inc_Q(s, a, alpha, r + discount * max_val)
+                inc_Q(s, a, alpha, r + discount * max_val) """
         elif steps == 8000:
             break
         steps = steps + 1

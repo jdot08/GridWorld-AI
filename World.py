@@ -3,7 +3,7 @@ from turtle import width
 from Tkinter import *
 master = Tk()
 
-triangle_size = .1
+triangle_size = .23
 cell_score_min = -0.2
 cell_score_max = 0.2
 Width = 100
@@ -73,6 +73,14 @@ def render_count():
     for (i, j, c, w, b) in drop_off:
         board.create_text(i*Width + 50, j*Width + 50, text=b, fill = "black", font=('Helvetica 15 bold'), tag = "text_count")
 
+def render_q(Q):
+    board.delete("text_q")
+    for i in range(5):
+        for j in range(5):
+                board.create_text(i*Width+10,   j*Width + 50, text=str(round(Q[(i,j)]["left"], 2)), fill = "black", tag = "text_q")
+                board.create_text(i*Width + 50, j*Width+10, text=str(round(Q[(i,j)]["up"], 2)), fill = "black", tag = "text_q")
+                board.create_text(i*Width + 90, j*Width+50, text=str(round(Q[(i,j)]["right"], 2)), fill = "black", tag = "text_q")
+                board.create_text(i*Width + 50, j*Width + 90, text=str(round(Q[(i,j)]["down"], 2)), fill = "black", tag = "text_q")
 
 def set_cell_score(state, action, val):
     global cell_score_min, cell_score_max
