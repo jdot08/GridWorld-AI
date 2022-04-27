@@ -900,6 +900,46 @@ def max_Q(s):
     act = None
     
     for a, q in Q[s].items():
+        isDroporPick = False
+        if a == "up":
+            x = s[0]
+            y = s[1] - 1
+            for (i,j,c,w,b) in World.specials:
+                if (x == i and y == j and b == 0):
+                    isDroporPick = True
+            for (i,j,c,w,b) in World.drop_off:
+                if (x == i and y == j and b == 5):
+                    isDroporPick = True
+        elif a == "down":
+            x = s[0]
+            y = s[1] + 1
+            for (i,j,c,w,b) in World.specials:
+                if (x == i and y == j and b == 0):
+                    isDroporPick = True
+            for (i,j,c,w,b) in World.drop_off:
+                if (x == i and y == j and b == 5):
+                    isDroporPick = True
+
+        elif a == "left":
+            x = s[0] - 1
+            y = s[1]
+            for (i,j,c,w,b) in World.specials:
+                if (x == i and y == j and b == 0):
+                    isDroporPick = True
+            for (i,j,c,w,b) in World.drop_off:
+                if (x == i and y == j and b == 5):
+                    isDroporPick = True    
+        elif a == "right":
+            x = s[0] + 1
+            y = s[1]
+            for (i,j,c,w,b) in World.specials:
+                if (x == i and y == j and b == 0):
+                    isDroporPick = True
+            for (i,j,c,w,b) in World.drop_off:
+                if (x == i and y == j and b == 5):
+                    isDroporPick = True
+        if isDroporPick:
+            continue
         if val is None or (q > val):
             val = q
             act = a
@@ -968,36 +1008,62 @@ def run():
     alpha = .3
     t = 1
     change = True
+    steps = 0
     while True:
 
-        # Pick the right action
-        if change == False:
-            s = World.player_M
-            #max_act, max_val = max_Q(s)
-            max_act, max_val = P_greedy_M(s)
-            #print(max_act, max_val)
-            (s, a, r, s2) = do_action(max_act)
+        #Experiment 1
+        if steps < 500:
+            if change == False:
+                s = World.player_M
+                #max_act, max_val = max_Q(s)
+                max_act, max_val = P_random_M(s)
+                #print(max_act, max_val)
+                (s, a, r, s2) = do_action(max_act)
 
-            # Update Q
-            max_act, max_val = max_Q_valid(s2)
-            inc_Q(s, a, alpha, r + discount * max_val)
-        else:
-            s = World.player_F
-            #max_act, max_val = max_Q(s)
-            max_act, max_val = P_greedy_F(s)
-            #print(Q[s])
-            #print(max_act, max_val)
-            (s, a, r, s2) = do_action_F(max_act)
+                # Update Q
+                max_act, max_val = max_Q_valid(s2)
+                inc_Q(s, a, alpha, r + discount * max_val)
+            else:
+                s = World.player_F
+                #max_act, max_val = max_Q(s)
+                max_act, max_val = P_random_F(s)
+                #print(Q[s])
+                #print(max_act, max_val)
+                (s, a, r, s2) = do_action_F(max_act)
 
-            # Update Q
-            max_act, max_val = max_Q_valid(s2)
-            inc_Q(s, a, alpha, r + discount * max_val)
+                # Update Q
+                max_act, max_val = max_Q_valid(s2)
+                inc_Q(s, a, alpha, r + discount * max_val)
+        elif steps >= 500 and steps < 8000:
+            if change == False:
+                s = World.player_M
+                #max_act, max_val = max_Q(s)
+                max_act, max_val = P_random_M(s)
+                #print(max_act, max_val)
+                (s, a, r, s2) = do_action(max_act)
 
+                # Update Q
+                max_act, max_val = max_Q(s2)
+                inc_Q(s, a, alpha, r + discount * max_val)
+            else:
+                s = World.player_F
+                #max_act, max_val = max_Q(s)
+                max_act, max_val = P_random_F(s)
+                #print(Q[s])
+                #print(max_act, max_val)
+                (s, a, r, s2) = do_action_F(max_act)
+
+                # Update Q
+                max_act, max_val = max_Q(s2)
+                inc_Q(s, a, alpha, r + discount * max_val)
+        elif steps == 8000:
+            break
+        steps = steps + 1
         # Check if the game has restarted
         t += 1.0
         if World.has_restarted():
             World.restart_game()
-            time.sleep(2)
+            time.sleep(.1)
             t = 1.0
         #print(Q[s])
         if change:
@@ -1006,12 +1072,14 @@ def run():
             change = True
 
         # Update the learning rate
-        alpha = pow(t, -0.1)
+        #alpha = pow(t, -0.1)
 
         # MODIFY THIS SLEEP IF THE GAME IS GOING TOO FAST.
         #raw_input()
         time.sleep(.01)
-
+    for i in range(5):
+        for j in range(5):
+            print(i , ", " , j , " " , Q[(i,j)])
 
 t = threading.Thread(target=run)
 t.daemon = True

@@ -3,7 +3,7 @@ from turtle import width
 from Tkinter import *
 master = Tk()
 
-triangle_size = 0.1
+triangle_size = .1
 cell_score_min = -0.2
 cell_score_max = 0.2
 Width = 100
