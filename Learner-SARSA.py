@@ -1013,7 +1013,7 @@ def run():
     steps = 0
     while True:
 
-        #Experiment 1.a
+        #Experiment 2
         if steps < 500:
             if change == False:
                 s = World.player_M
@@ -1024,7 +1024,7 @@ def run():
 
                 # Update Q
                 max_act, max_val = max_Q(s2)
-                inc_Q(s, a, alpha, r + discount * Q[s][a])
+                inc_Q(s, a, alpha, r + discount * Q[s2][a])
             else:
                 s = World.player_F
                 #max_act, max_val = max_Q(s)
@@ -1035,7 +1035,7 @@ def run():
 
                 # Update Q
                 max_act, max_val = max_Q(s2)
-                inc_Q(s, a, alpha, r + discount * Q[s][a])
+                inc_Q(s, a, alpha, r + discount * Q[s2][a])
         elif steps >= 500 and steps < 8000:
             if change == False:
                 s = World.player_M
@@ -1046,7 +1046,7 @@ def run():
 
                 # Update Q
                 max_act, max_val = max_Q(s2)
-                inc_Q(s, a, alpha, r + discount * Q[s][a])
+                inc_Q(s, a, alpha, r + discount * Q[s2][a])
             else:
                 s = World.player_F
                 #max_act, max_val = max_Q(s)
@@ -1057,7 +1057,7 @@ def run():
 
                 # Update Q
                 max_act, max_val = max_Q(s2)
-                inc_Q(s, a, alpha, r + discount * Q[s][a])
+                inc_Q(s, a, alpha, r + discount * Q[s2][a])
 
         elif steps == 8000:
             break
